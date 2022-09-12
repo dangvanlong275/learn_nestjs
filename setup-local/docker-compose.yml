@@ -1,0 +1,34 @@
+version: '3'
+services: 
+
+  db:
+    container_name: postgres
+    image: postgres
+    restart: always
+    environment: 
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=111111
+      - POSTGRES_DB=nestjs_test
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+    ports: 
+      - "5432:5432"
+    networks:
+      - _network
+
+  # redis:
+  #   container_name: redis
+  #   image: "redis:latest"
+  #   ports:
+  #     - "6379:6379"
+  #   volumes:
+  #     - "./redisdata/redis:/data"
+  #   networks:
+  #     - _network
+
+volumes:
+  pgdata:
+
+networks:
+  _network:
+    driver: bridge
