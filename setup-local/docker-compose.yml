@@ -1,21 +1,40 @@
-version: '3'
-services: 
+version: '3.2'
+networks:
+  default:
+    external: true
+    name: dev_network
 
-  db:
-    container_name: postgres
-    image: postgres
+services:
+  node:
+    build: ..
+    container_name: 'learn_nestjs'
+    ports:
+      - 3003:3000
+
+  postgresql:
+    container_name: postgresql
+    image: postgres:14.2
     restart: always
-    environment: 
+    environment:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=111111
-      - POSTGRES_DB=nestjs_test
     volumes:
       - ./pgdata:/var/lib/postgresql/data
-    ports: 
-      - "5432:5432"
-    networks:
-      - _network
+    ports:
+      - 5432:5432
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    hostname: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=root
+      - RABBITMQ_DEFAULT_PASS=111111
+    volumes:
+      - /var/lib/rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
   # redis:
   #   container_name: redis
   #   image: "redis:latest"
@@ -26,9 +45,3 @@ services:
   #   networks:
   #     - _network
 
-volumes:
-  pgdata:
-
-networks:
-  _network:
-    driver: bridge

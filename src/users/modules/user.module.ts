@@ -33,5 +33,6 @@ const providerValidator = [IsUserAlreadyExistConstraint];
   ],
   providers: [...providerValidator, UserService, AuthService, JwtStrategy],
   controllers: [UserController, AuthController],
+  exports: [UserService],
 })
 export class UserModule {}

@@ -14,6 +14,7 @@ import { IPost } from 'src/posts/entities/interface/post.interface';
 import { PostService } from 'src/posts/services/post.service';
 import { JwtGuard } from 'src/users/jwt.guard';
 import { DeleteResult, UpdateResult } from 'typeorm';
+import { CreatePostDTO, UpdatePostDTO } from '../dto/post.dto';
 
 @UseGuards(JwtGuard)
 @Controller('posts')
@@ -21,7 +22,7 @@ export class PostController {
   constructor(private postService: PostService) {}
 
   @Post()
-  async create(@Body() post: IPost, @Req() req: any): Promise<IPost> {
+  async create(@Body() post: CreatePostDTO, @Req() req: any): Promise<IPost> {
     return await this.postService.create(req.user, post);
   }
 
@@ -36,11 +37,11 @@ export class PostController {
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param('id') id: number,
-    @Body() post: IPost,
-  ): Observable<UpdateResult> {
-    return from(this.postService.update(id, post));
+    @Body() post: UpdatePostDTO,
+  ): Promise<UpdateResult> {
+    return await this.postService.update(id, post);
   }
 
   @Delete(':id')

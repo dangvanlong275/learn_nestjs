@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { pathFile } from 'src/helpers/global-function/global-function';
 import { LocalFilesInterceptor } from 'src/interceptors/upload-file.interceptor';
-import { CreateUserDTO, LoginUserDTO } from '../dto/create-user-dto';
+import { CreateUserDTO, LoginUserDTO } from '../dto/user.dto';
 import { User } from '../entities/user.entity';
 import { AuthService } from '../services/auth.service';
 
@@ -26,7 +26,7 @@ export class AuthController {
     @Body() userDTO: CreateUserDTO,
     @UploadedFile() file: Express.Multer.File,
   ): Promise<any> {
-    userDTO.avatar = pathFile(file.path);
+    userDTO.avatar = pathFile(file?.path);
     return await this.authService.register(userDTO);
   }
 

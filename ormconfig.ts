@@ -1,18 +1,21 @@
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
+import * as dotenv from 'dotenv';
+
+const env = dotenv.config().parsed;
 
 const config: PostgresConnectionOptions = {
   type: 'postgres',
-  host: 'localhost',
-  port: 5432,
-  username: 'root',
-  password: '111111',
-  database: 'nest_js',
+  host: env.DB_HOST,
+  port: parseInt(env.DB_PORT),
+  username: env.DB_USERNAME,
+  password: env.DB_PASSWORD,
+  database: env.DB_DATABASE,
   synchronize: true,
   logging: false,
-  entities: ['dist/entities/**/*.entity.{ts,js}'],
-  migrations: ['dist/database/migration/**/*.{ts,js}'],
-  subscribers: ['dist/subscriber/**/*.{ts,js}'],
-  migrationsTableName: 'custom_migration_table',
+  entities: [env.ENTITIES],
+  migrations: [env.MIGRATIONS],
+  subscribers: [env.SUBSCRIBERS],
+  migrationsTableName: env.MIGRATIONSTABLENAME,
 };
 
 export default config;

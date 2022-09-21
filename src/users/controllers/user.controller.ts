@@ -16,6 +16,7 @@ import { LocalFilesInterceptor } from 'src/interceptors/upload-file.interceptor'
 import { IUser } from 'src/users/entities/interface/user.interface';
 import { UserService } from 'src/users/services/user.service';
 import { DeleteResult, UpdateResult } from 'typeorm';
+import { UpdateUserDTO } from '../dto/user.dto';
 import { JwtGuard } from '../jwt.guard';
 
 @Controller('users')
@@ -46,7 +47,7 @@ export class UserController {
   @Put(':id')
   update(
     @Param('id') id: number,
-    @Body() user: IUser,
+    @Body() user: UpdateUserDTO,
   ): Observable<UpdateResult> {
     return from(this.userService.update(id, user));
   }

@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { CreateUserDTO, LoginUserDTO } from '../dto/create-user-dto';
+import { CreateUserDTO, LoginUserDTO } from '../dto/user.dto';
 import { IUser } from '../entities/interface/user.interface';
 import { UserService } from './user.service';
 

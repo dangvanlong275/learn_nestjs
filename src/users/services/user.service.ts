@@ -4,9 +4,9 @@ import { Observable } from 'rxjs';
 import { from } from 'rxjs';
 import { User } from 'src/users/entities/user.entity';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
-import { CreateUserDTO, LoginUserDTO } from '../dto/create-user-dto';
 import * as bcrypt from 'bcrypt';
 import { IUser } from '../entities/interface/user.interface';
+import { CreateUserDTO, LoginUserDTO, UpdateUserDTO } from '../dto/user.dto';
 
 @Injectable()
 export class UserService {
@@ -26,7 +26,6 @@ export class UserService {
       where: {
         id: id,
       },
-      relations: ['posts'],
     });
   }
 
@@ -63,7 +62,7 @@ export class UserService {
     return await this.userRepository.find();
   }
 
-  update(id: number, user: IUser): Observable<UpdateResult> {
+  update(id: number, user: UpdateUserDTO): Observable<UpdateResult> {
     return from(this.userRepository.update(id, user));
   }
 

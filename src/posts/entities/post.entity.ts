@@ -10,9 +10,6 @@ export class Post extends BaseEntity {
   @Column({ nullable: true })
   description: string;
 
-  @Column({ default: 1 })
-  user_id: number;
-
   @ManyToOne(() => User, (user) => user.posts)
   user: User;
 }
