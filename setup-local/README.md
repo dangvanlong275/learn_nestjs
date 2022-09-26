@@ -1,19 +1,10 @@
-## Create env
-```
-cp env.example .env
-```
-## Create network docker
-```
-docker network create dev_network
-```
-## Up container Postgres
+## Up container All Services
 ```
 docker-compose up -d --build
 ```
-## Create database
-## Example: nestjs_test
+## Up container One Service
 ```
-docker-compose exec -T postgresql /bin/bash -c "createdb nestjs_test"
+docker-compose up -d --build <service_name>
 ```
 ## Down container Postgres
 ```

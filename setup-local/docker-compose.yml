@@ -1,8 +1,4 @@
 version: '3.2'
-networks:
-  default:
-    external: true
-    name: dev_network
 
 services:
   node:
@@ -17,24 +13,28 @@ services:
     restart: always
     environment:
       - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=111111
+      - POSTGRES_PASSWORD=p433word
+      - POSTGRES_DB=nestjs_test
     volumes:
       - ./pgdata:/var/lib/postgresql/data
     ports:
       - 5432:5432
+    networks: 
+      - dev_network
 
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: rabbitmq
-    hostname: rabbitmq
-    environment:
-      - RABBITMQ_DEFAULT_USER=root
-      - RABBITMQ_DEFAULT_PASS=111111
-    volumes:
-      - /var/lib/rabbitmq
-    ports:
-      - 5672:5672
-      - 15672:15672
+  # rabbitmq:
+  #   image: rabbitmq:3-management
+  #   container_name: rabbitmq
+  #   hostname: rabbitmq
+  #   environment:
+  #     - RABBITMQ_DEFAULT_USER=root
+  #     - RABBITMQ_DEFAULT_PASS=p433word
+  #   volumes:
+  #     - /var/lib/rabbitmq
+  #   ports:
+  #     - 5672:5672
+  #     - 15672:15672
+
   # redis:
   #   container_name: redis
   #   image: "redis:latest"
@@ -43,5 +43,9 @@ services:
   #   volumes:
   #     - "./redisdata/redis:/data"
   #   networks:
-  #     - _network
+  #     - dev_network
+
+networks:
+  dev_network:
+    driver: bridge
 
