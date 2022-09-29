@@ -1,7 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Observable } from 'rxjs';
-import { from } from 'rxjs';
 import { User } from 'src/users/entities/user.entity';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -62,11 +60,11 @@ export class UserService {
     return await this.userRepository.find();
   }
 
-  update(id: number, user: UpdateUserDTO): Observable<UpdateResult> {
-    return from(this.userRepository.update(id, user));
+  async update(id: number, user: UpdateUserDTO): Promise<UpdateResult> {
+    return await this.userRepository.update(id, user);
   }
 
-  delete(id: number): Observable<DeleteResult> {
-    return from(this.userRepository.delete(id));
+  async delete(id: number): Promise<DeleteResult> {
+    return await this.userRepository.delete(id);
   }
 }

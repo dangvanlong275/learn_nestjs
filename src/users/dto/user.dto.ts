@@ -1,4 +1,4 @@
-import { IsEmail, IsEmpty, IsNotEmpty, IsString } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { IsUserAlreadyExist } from 'src/users/request/user-validation.constraint';
 
 export class CreateUserDTO {
@@ -20,13 +20,13 @@ export class CreateUserDTO {
 }
 
 export class UpdateUserDTO {
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   name: string;
 
   avatar?: string;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsUserAlreadyExist({
     message: 'Email already used',
   })

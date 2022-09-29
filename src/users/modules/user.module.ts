@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -10,6 +10,7 @@ import { JwtStrategy } from '../jwt.strategy';
 import { AuthService } from '../services/auth.service';
 import * as dotenv from 'dotenv';
 import { IsUserAlreadyExistConstraint } from '../request/user-validation.constraint';
+import { PostModule } from 'src/posts/modules/post.module';
 dotenv.config();
 
 const providerValidator = [IsUserAlreadyExistConstraint];
@@ -17,6 +18,7 @@ const providerValidator = [IsUserAlreadyExistConstraint];
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
+    forwardRef(() => PostModule),
     PassportModule.register({
       defaultStrategy: 'jwt',
       property: 'user',

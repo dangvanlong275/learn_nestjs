@@ -24,7 +24,7 @@ export class TransformInterceptor<T>
       map((data) => ({
         status: true,
         message: HttpStatus[HttpStatus.OK],
-        data: data,
+        ...data,
       })),
     );
   }
