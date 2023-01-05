@@ -5,12 +5,13 @@ import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { IUser } from '../entities/interface/user.interface';
 import { CreateUserDTO, LoginUserDTO, UpdateUserDTO } from '../dto/user.dto';
+import { PageOptionsDTO } from 'src/helpers/global-dto/page-options.dto';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
-    private readonly userRepository: Repository<IUser>,
+    public readonly userRepository: Repository<IUser>,
   ) {}
 
   async create(createUserDTO: CreateUserDTO): Promise<IUser> {
@@ -56,8 +57,14 @@ export class UserService {
     return user;
   }
 
-  async findAll(): Promise<IUser[]> {
-    return await this.userRepository.find();
+  async findAll({ skip, per_page }: PageOptionsDTO): Promise<IUser[]> {
+    return await this.userRepository.find({
+      order: {
+        created_at: 'DESC',
+      },
+      skip: skip,
+      take: per_page,
+    });
   }
 
   async update(id: number, user: UpdateUserDTO): Promise<UpdateResult> {

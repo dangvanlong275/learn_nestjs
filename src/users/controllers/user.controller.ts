@@ -20,7 +20,6 @@ import { IPost } from 'src/posts/entities/interface/post.interface';
 import { PostService } from 'src/posts/services/post.service';
 import { IUser } from 'src/users/entities/interface/user.interface';
 import { UserService } from 'src/users/services/user.service';
-import { DeleteResult, UpdateResult } from 'typeorm';
 import { UpdateUserDTO } from '../dto/user.dto';
 import { JwtGuard } from '../jwt.guard';
 
@@ -53,9 +52,9 @@ export class UserController {
   async findAll(
     @Query() pageOptionsDTO: PageOptionsDTO,
   ): Promise<PageDTO<IUser[]>> {
-    const users = await this.userService.findAll();
+    const users = await this.userService.findAll(pageOptionsDTO);
     const pageMetaDTO = await this.postService.pageMeta(
-      this.postService.postRepository,
+      this.userService.userRepository,
       pageOptionsDTO,
     );
 
@@ -66,19 +65,19 @@ export class UserController {
   async update(
     @Param('id') id: number,
     @Body() user: UpdateUserDTO,
-  ): Promise<ResponseSuccessDTO<UpdateResult>> {
-    const result = await this.userService.update(id, user);
+  ): Promise<ResponseSuccessDTO<IUser>> {
+    await this.userService.update(id, user);
+    const userUpdate = await this.userService.findById(id);
 
-    return new ResponseSuccessDTO(result);
+    return new ResponseSuccessDTO(userUpdate);
   }
 
   @Delete(':id')
-  async delete(
-    @Param('id') id: number,
-  ): Promise<ResponseSuccessDTO<DeleteResult>> {
-    const result = await this.userService.delete(id);
+  async delete(@Param('id') id: number): Promise<ResponseSuccessDTO<IUser>> {
+    const userDelete = await this.userService.findById(id);
+    await this.userService.delete(id);
 
-    return new ResponseSuccessDTO(result);
+    return new ResponseSuccessDTO(userDelete);
   }
 
   @Get(':id/posts')

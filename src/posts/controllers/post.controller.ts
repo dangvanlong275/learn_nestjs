@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpStatus,
   Param,
   Post,
   Put,
@@ -31,7 +32,7 @@ export class PostController {
   ): Promise<ResponseSuccessDTO<IPost>> {
     const newPost = await this.postService.create(req.user, post);
 
-    return new ResponseSuccessDTO(newPost);
+    return new ResponseSuccessDTO(newPost, HttpStatus.CREATED);
   }
 
   @Get(':id')
@@ -61,18 +62,18 @@ export class PostController {
   async update(
     @Param('id') id: number,
     @Body() post: UpdatePostDTO,
-  ): Promise<ResponseSuccessDTO<UpdateResult>> {
-    const result = await this.postService.update(id, post);
+  ): Promise<ResponseSuccessDTO<IPost>> {
+    await this.postService.update(id, post);
+    const postUpdate = await this.postService.findById(id);
 
-    return new ResponseSuccessDTO(result);
+    return new ResponseSuccessDTO(postUpdate);
   }
 
   @Delete(':id')
-  async delete(
-    @Param('id') id: number,
-  ): Promise<ResponseSuccessDTO<DeleteResult>> {
-    const result = await this.postService.delete(id);
+  async delete(@Param('id') id: number): Promise<ResponseSuccessDTO<IPost>> {
+    const postDelete = await this.postService.findById(id);
+    await this.postService.delete(id);
 
-    return new ResponseSuccessDTO(result);
+    return new ResponseSuccessDTO(postDelete);
   }
 }
