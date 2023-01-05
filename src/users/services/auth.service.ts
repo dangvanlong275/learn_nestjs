@@ -41,10 +41,6 @@ export class AuthService {
   }
 
   private _createToken({ email }: IUser): any {
-    const accessToken = this.jwtService.sign({ email });
-    return {
-      expiresIn: process.env.EXPIRED,
-      accessToken,
-    };
+    return this.jwtService.sign({ email });
   }
 }
