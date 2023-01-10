@@ -5,6 +5,7 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
+import { ResponseSuccessDTO } from 'src/helpers/global-dto/response-success.dto';
 import { pathFile } from 'src/helpers/global-function/global-function';
 import { LocalFilesInterceptor } from 'src/interceptors/upload-file.interceptor';
 import { CreateUserDTO, LoginUserDTO } from '../dto/user.dto';
@@ -25,13 +26,17 @@ export class AuthController {
   async register(
     @Body() userDTO: CreateUserDTO,
     @UploadedFile() file: Express.Multer.File,
-  ): Promise<any> {
+  ): Promise<ResponseSuccessDTO<any>> {
     userDTO.avatar = pathFile(file?.path);
-    return await this.authService.register(userDTO);
+    const user = await this.authService.register(userDTO);
+
+    return new ResponseSuccessDTO(user);
   }
 
   @Post('login')
-  async login(@Body() userDTO: LoginUserDTO): Promise<any> {
-    return await this.authService.login(userDTO);
+  async login(@Body() userDTO: LoginUserDTO): Promise<ResponseSuccessDTO<any>> {
+    const user = await this.authService.login(userDTO);
+
+    return new ResponseSuccessDTO(user);
   }
 }

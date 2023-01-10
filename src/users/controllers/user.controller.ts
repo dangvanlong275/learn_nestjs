@@ -6,13 +6,18 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Req,
   UploadedFiles,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { from, Observable } from 'rxjs';
+import { PageOptionsDTO } from 'src/helpers/global-dto/page-options.dto';
+import { PageDTO } from 'src/helpers/global-dto/page.dto';
+import { ResponseSuccessDTO } from 'src/helpers/global-dto/response-success.dto';
 import { LocalFilesInterceptor } from 'src/interceptors/upload-file.interceptor';
+import { IPost } from 'src/posts/entities/interface/post.interface';
+import { PostService } from 'src/posts/services/post.service';
 import { IUser } from 'src/users/entities/interface/user.interface';
 import { UserService } from 'src/users/services/user.service';
 import { DeleteResult, UpdateResult } from 'typeorm';
@@ -21,7 +26,10 @@ import { JwtGuard } from '../jwt.guard';
 
 @Controller('users')
 export class UserController {
-  constructor(private userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly postService: PostService,
+  ) {}
 
   // @Post()
   // async create(@Body() createUserDTO: CreateUserDTO): Promise<IUser> {
@@ -31,30 +39,63 @@ export class UserController {
   @UseGuards(JwtGuard)
   @Get('profile')
   async getProfile(@Req() req: any) {
-    return req.user;
+    return new ResponseSuccessDTO(req.user);
   }
 
   @Get(':id')
-  async findById(@Param('id') id: number): Promise<IUser> {
-    return await this.userService.findById(id);
+  async findById(@Param('id') id: number): Promise<ResponseSuccessDTO<IUser>> {
+    const user = await this.userService.findById(id);
+
+    return new ResponseSuccessDTO(user);
   }
 
   @Get()
-  async findAll(): Promise<IUser[]> {
-    return await this.userService.findAll();
+  async findAll(
+    @Query() pageOptionsDTO: PageOptionsDTO,
+  ): Promise<PageDTO<IUser[]>> {
+    const users = await this.userService.findAll();
+    const pageMetaDTO = await this.postService.pageMeta(
+      this.postService.postRepository,
+      pageOptionsDTO,
+    );
+
+    return new PageDTO(users, pageMetaDTO);
   }
 
   @Put(':id')
-  update(
+  async update(
     @Param('id') id: number,
     @Body() user: UpdateUserDTO,
-  ): Observable<UpdateResult> {
-    return from(this.userService.update(id, user));
+  ): Promise<ResponseSuccessDTO<UpdateResult>> {
+    const result = await this.userService.update(id, user);
+
+    return new ResponseSuccessDTO(result);
   }
 
   @Delete(':id')
-  delete(@Param('id') id: number): Observable<DeleteResult> {
-    return from(this.userService.delete(id));
+  async delete(
+    @Param('id') id: number,
+  ): Promise<ResponseSuccessDTO<DeleteResult>> {
+    const result = await this.userService.delete(id);
+
+    return new ResponseSuccessDTO(result);
+  }
+
+  @Get(':id/posts')
+  async findPostByAuthor(
+    @Param('id') userId: number,
+    @Query() pageOptionsDTO: PageOptionsDTO,
+  ): Promise<PageDTO<IPost[]>> {
+    const posts = await this.postService
+      .with(['user', 'comments'])
+      .findPostByAuthor(userId, pageOptionsDTO);
+
+    const pageMetaDTO = await this.postService.pageMeta(
+      this.postService.postRepository,
+      pageOptionsDTO,
+    );
+
+    return new PageDTO(posts, pageMetaDTO);
   }
 
   @Post('upload')

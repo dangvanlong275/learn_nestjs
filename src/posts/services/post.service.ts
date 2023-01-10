@@ -1,6 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { from, Observable } from 'rxjs';
 import { IPost } from 'src/posts/entities/interface/post.interface';
 import { IUser } from 'src/users/entities/interface/user.interface';
 import { Post } from 'src/posts/entities/post.entity';
@@ -11,14 +10,19 @@ import {
   isset,
 } from 'src/helpers/global-function/global-function';
 import { UserService } from 'src/users/services/user.service';
+import { Model } from 'src/base/base.entity';
+import { PageOptionsDTO } from 'src/helpers/global-dto/page-options.dto';
 
 @Injectable()
-export class PostService {
+export class PostService extends Model {
   constructor(
     @InjectRepository(Post)
-    private readonly postRepository: Repository<IPost>,
+    @Inject(forwardRef(() => UserService))
+    public readonly postRepository: Repository<IPost>,
     private readonly userService: UserService,
-  ) {}
+  ) {
+    super();
+  }
 
   async create(user: IUser, post: CreatePostDTO): Promise<IPost> {
     post.user = user;
@@ -30,12 +34,46 @@ export class PostService {
       where: {
         id: id,
       },
-      relations: ['user'],
+      relations: this.withes,
     });
   }
 
-  async findAll(): Promise<IPost[]> {
-    return await this.postRepository.find({ relations: ['user'] });
+  async findAll({ skip, per_page }: PageOptionsDTO): Promise<IPost[]> {
+    return await this.postRepository.find({
+      relations: this.withes,
+      order: {
+        created_at: 'DESC',
+        comments: {
+          created_at: 'DESC',
+        },
+      },
+      skip: skip,
+      take: per_page,
+    });
+  }
+
+  async findPostByAuthor(
+    userId: number,
+    { per_page, skip }: PageOptionsDTO,
+  ): Promise<IPost[]> {
+    this.where({
+      user: {
+        id: userId,
+      },
+    });
+
+    return await this.postRepository.find({
+      where: this.whereOptions,
+      relations: this.withes,
+      order: {
+        created_at: 'DESC',
+        comments: {
+          created_at: 'DESC',
+        },
+      },
+      skip: skip,
+      take: per_page,
+    });
   }
 
   async update(id: number, post: UpdatePostDTO): Promise<UpdateResult> {
@@ -47,7 +85,7 @@ export class PostService {
     return await this.postRepository.update(id, post);
   }
 
-  delete(id: number): Observable<DeleteResult> {
-    return from(this.postRepository.delete(id));
+  async delete(id: number): Promise<DeleteResult> {
+    return await this.postRepository.delete(id);
   }
 }
