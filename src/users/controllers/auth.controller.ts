@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  HttpStatus,
   Post,
   UploadedFile,
   UseInterceptors,
@@ -30,7 +31,7 @@ export class AuthController {
     userDTO.avatar = pathFile(file?.path);
     const user = await this.authService.register(userDTO);
 
-    return new ResponseSuccessDTO(user);
+    return new ResponseSuccessDTO(user, HttpStatus.CREATED);
   }
 
   @Post('login')

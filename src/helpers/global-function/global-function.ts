@@ -5,7 +5,7 @@ export const isString = (value: any): boolean => {
 };
 
 export const isset = (value: any): boolean => {
-  return !(value == null);
+  return !(value == null || value == undefined);
 };
 
 export const deleteProps = (model: object, keys: string[]): any => {

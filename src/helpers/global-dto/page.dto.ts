@@ -3,10 +3,10 @@ import { PageMetaDTO } from './page-meta.dto';
 export class PageDTO<T> {
   readonly data: T;
 
-  readonly meta: PageMetaDTO;
+  readonly pagination: PageMetaDTO;
 
-  constructor(data: T, meta: PageMetaDTO) {
+  constructor(data: T, pagination: PageMetaDTO) {
     this.data = data;
-    this.meta = meta;
+    this.pagination = pagination;
   }
 }

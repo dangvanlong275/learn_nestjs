@@ -43,7 +43,7 @@ export abstract class Model {
     repository: Repository<ObjectLiteral>,
     pageOptionsDTO: PageOptionsDTO,
   ): Promise<PageMetaDTO> => {
-    const itemCount = await this.countEntity(repository);
-    return new PageMetaDTO({ pageOptionsDTO, itemCount });
+    const totalItem = await this.countEntity(repository);
+    return new PageMetaDTO({ pageOptionsDTO, totalItem });
   };
 }

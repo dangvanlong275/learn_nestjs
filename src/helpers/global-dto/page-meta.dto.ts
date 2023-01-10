@@ -2,23 +2,19 @@ import { PageOptionsDTO } from './page-options.dto';
 
 export interface PageMetaDtoParameters {
   pageOptionsDTO: PageOptionsDTO;
-  itemCount: number;
+  totalItem: number;
 }
 
 export class PageMetaDTO {
   readonly page;
   readonly per_page;
-  readonly item_count;
-  readonly page_count;
-  readonly has_previous_page;
-  readonly has_next_page;
+  readonly total_item;
+  readonly page_number;
 
-  constructor({ pageOptionsDTO, itemCount }: PageMetaDtoParameters) {
+  constructor({ pageOptionsDTO, totalItem }: PageMetaDtoParameters) {
     this.page = pageOptionsDTO.page;
     this.per_page = pageOptionsDTO.per_page;
-    this.item_count = itemCount;
-    this.page_count = Math.ceil(this.item_count / this.per_page);
-    this.has_previous_page = this.page > 1;
-    this.has_next_page = this.page < this.page_count;
+    this.total_item = totalItem;
+    this.page_number = Math.ceil(this.total_item / this.per_page);
   }
 }
